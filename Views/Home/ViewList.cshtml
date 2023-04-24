@@ -1,0 +1,103 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "All Movies";
+}
+
+<h1 class="text-center">View Movies List</h1>
+
+@model List<ApplicationResponse>
+@*Table to display information*@
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="@Url.Action("ViewList", new { pageNumber = ViewBag.PageNumber })" class="list-group-item list-group-item-action @(ViewBag.FilteredCategory == null ? "active" : "")">All Categories</a>
+                @foreach (Category c in ViewBag.Categories)
+                {
+                    <a asp-action="ViewList" asp-route-pageNumber="1" asp-route-categoryId="@c.CategoryID" class="list-group-item list-group-item-action @(ViewBag.FilteredCategory == c.CategoryID ? "active" : "")">@c.CategoryName</a>
+                }
+            </div>
+        </div>
+        <div class="col-md-9">
+
+            <table class="table table-bordered table-striped background-color:#FFFFFF;">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Title</th>
+                        <th>Year</th>
+                        <th>Director</th>
+                        <th>Rating</th>
+                        <th>Edited</th>
+                        <th>LentTo</th>
+                        <th>Notes</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+
+                @*Display each row*@
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Category.CategoryName</td>
+                            <td>@item.Title</td>
+                            <td>@item.Year</td>
+                            <td>@item.Director</td>
+                            <td>@item.Rating</td>
+                            <td>@item.Edited</td>
+                            <td>@item.LentTo</td>
+                            <td>@item.Notes</td>
+
+                            <td><a asp-controller="Home" asp-action="Edit" asp-route-id="@item.ApplicationID">Edit</a></td>
+                            <td><a asp-controller="Home" asp-action="Delete" asp-route-id="@item.ApplicationID">Delete</a></td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Add pagination controls -->
+            <div class="d-flex justify-content-center">
+                <nav aria-label="Movie List Navigation">
+                    <ul class="pagination">
+                        <li class="page-item @(ViewBag.PageNumber == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="ViewList" asp-route-pageNumber="1">First</a>
+                        </li>
+                        <li class="page-item @(ViewBag.PageNumber == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-action="ViewList" asp-route-pageNumber="@(ViewBag.PageNumber - 1)">Previous</a>
+                        </li>
+                        @{
+                            var startPage = Math.Max(1, ViewBag.PageNumber - 2); // Show two pages before the current page
+                            var endPage = Math.Min(ViewBag.TotalPages, ViewBag.PageNumber + 2); // Show two pages after the current page
+                        }
+                        @for (var i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(ViewBag.PageNumber == i ? "active" : "")">
+                                <a class="page-link" asp-action="ViewList" asp-route-pageNumber="@i">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(ViewBag.PageNumber == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" asp-action="ViewList" asp-route-pageNumber="@(ViewBag.PageNumber + 1)">Next</a>
+                        </li>
+                        <li class="page-item @(ViewBag.PageNumber == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" asp-action="ViewList" asp-route-pageNumber="@ViewBag.TotalPages">Last</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <br />
+            <br />
+            <br />
+
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+<br />
